@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser= require('body-parser');
+require('dotenv').config();
 
 const cors = require('cors');
 
@@ -13,10 +14,9 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false })); 
 
 const port = 3000;
-const hostName= '192.168.29.4;'
 
 // Connect to your MongoDB database
-mongoose.connect('mongodb://127.0.0.1:27017/artfeast', {
+mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

@@ -2,6 +2,7 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt');
 const mongoose=require('mongoose')
 const jwt= require('jsonwebtoken')
+require('dotenv').config()
 
 
 const signup = async (req,res)=>{
@@ -30,7 +31,7 @@ const login = async (req, res) => {
      console.log(userName,password)
      const user = await User.findOne({ userName });
      console.log(user)
-     const secretKey ='SECRET'  // write in env file
+     const secretKey = process.env.JWT_SECRET
      
      if (!user) {
        return res.status(401).json({ message: 'User not found' });
