@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const User = require('./user')
+// const Cart 
 
 const postSchema = new mongoose.Schema({
     postId:{
@@ -18,6 +19,10 @@ const postSchema = new mongoose.Schema({
     },
     description:{
         type: String
+    },
+    price :{
+      type: Number,
+      default: 0
     },
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
