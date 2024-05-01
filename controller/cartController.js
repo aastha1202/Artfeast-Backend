@@ -1,4 +1,6 @@
 const Cart = require('../models/cart')
+const Post = require('../models/post')
+
 
 const addPost = async (req,res)=>{
     try{
@@ -6,16 +8,23 @@ const addPost = async (req,res)=>{
         const {userId} = req.user
         let cart = await Cart.findOne({userId})
         if(!cart){
-            cart= new Cart({userId,items:[{postId, quantity}]})
+            const post = await Post.findOne({postId:postId})
+            if(post){
+                cart= new Cart({userId,items:[{postId, quantity, artistId: post.userId}]})
+            }
         }
         else{
             let existingItem = cart.items.find(item => item.postId.equals(postId))
-
             if(existingItem){
                 existingItem.quantity += quantity
             }
             else{
-                cart.items.push({postId,quantity})
+                const post = await Post.findOne({postId:postId})
+                if (!post) {
+                    return res.status(404).json({ error: 'Post not found' });
+                }
+                else
+                cart.items.push({ postId, quantity, artistId: post.userId });
             }
         }
 
@@ -38,7 +47,6 @@ const deletePost = async (req,res)=>{
         if(!cart){
            return res.status(402).json({ message: 'Cart not found' });
         }
-        console.log('postId',postId)
         const index = cart.items.findIndex(item => item.postId.equals(postId))
 
         if(index === -1){
@@ -66,7 +74,6 @@ const decreasePostQuantityItem = async (req,res)=>{
         if(!cart){
            return res.status(402).json({ message: 'Cart not found' });
         }
-        console.log('postId',postId)
         const index = cart.items.findIndex(item => item.postId.equals(postId))
 
         if(index === -1){
@@ -95,8 +102,14 @@ const findAllPostsinCart = async(req,res)=>{
         const cartItem = await Cart.findOne({userId:userId}).populate({
         path: 'items.postId',
         model: 'Post',
-        select: 'postUrl price',
+        select: 'postUrl price userId dimensions artworkName theme',
         foreignField: 'postId',
+        populate : {
+            path: 'userId',
+            model:'User',
+            select:'fullName',
+            foreignField:'userId'
+        }
       })
         res.send(cartItem)
     }catch(e){

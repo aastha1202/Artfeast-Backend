@@ -25,7 +25,8 @@ const userSchema = new mongoose.Schema({
         enum: ['artist', 'customer'], 
     },
     profilePictureUrl:{
-        type:String
+        type:String,
+        default:'https://th.bing.com/th/id/OIP.Vkq2M9ypBsn7NpZwDZeNyQHaHa?rs=1&pid=ImgDetMain'
     },
     followers:[
         {type: mongoose.Schema.Types.ObjectId, ref:'User'}

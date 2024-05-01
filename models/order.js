@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const cartItemSchema = new mongoose.Schema({
+const orderItemSchema = new mongoose.Schema({
     postId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post',
@@ -18,16 +18,24 @@ const cartItemSchema = new mongoose.Schema({
     },
 });
 
-const cartSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
-        unique: true
     },
-    items: [cartItemSchema] 
+    items: [orderItemSchema],
+    paymentStatus : {
+        type: String,
+        enum: ['success', 'failed', 'pending'],
+        default: 'pending'
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-const Cart = mongoose.model('Cart', cartSchema);
+const Order = mongoose.model('Order', orderSchema);
 
-module.exports = Cart;
+module.exports = Order;

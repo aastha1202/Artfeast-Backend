@@ -7,7 +7,6 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors({
-  // http://192.168.63.2:3000/auth/signup
   origin:'*' 
 }));
 app.use(bodyParser.json())
@@ -25,13 +24,14 @@ const postRoutes = require('./routes/postRoutes')
 const followRoutes = require('./routes/followRoutes')
 const userRoutes = require('./routes/userRoutes')
 const cartRoutes = require('./routes/cartRoutes')
-
+const orderRoutes = require('./routes/orderRoutes')
 
 app.use('/auth', authRoutes);
 app.use('/post',postRoutes)
 app.use('/follows', followRoutes)
 app.use('/userDetails', userRoutes)
 app.use('/cart', cartRoutes)
+app.use('/order', orderRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

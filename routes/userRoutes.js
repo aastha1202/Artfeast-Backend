@@ -5,6 +5,10 @@ const middleware = require('../middleware/auth')
 
 
 router.get('/',middleware,userController.getUserDetails)
+router.post('/switchRole',middleware,userController.switchtoArtist)
+router.get('/:userId',middleware,userController.getUserProfile)
+
+
 
 
 

@@ -9,7 +9,10 @@ const signup = async (req,res)=>{
 
  try{
     const { fullName,userName, password} = req.body;
-    console.table[fullName,userName,password]
+    const user = await User.findOne({userName})
+    if(user){
+      return res.status(400).json({message: 'User already exists'})
+    }
     const hashedPassword= await bcrypt.hash(password,10)
     const userId = new mongoose.Types.ObjectId();
 
@@ -28,9 +31,7 @@ const signup = async (req,res)=>{
 const login = async (req, res) => {
    try {
      const { userName, password } = req.body;
-     console.log(userName,password)
      const user = await User.findOne({ userName });
-     console.log(user)
      const secretKey = process.env.JWT_SECRET
      
      if (!user) {
@@ -40,7 +41,7 @@ const login = async (req, res) => {
      const passwordMatch = await bcrypt.compare(password, user.password);
  
      if (passwordMatch) {
-      const token= jwt.sign({userId: user.userId, userName: user.userName}, secretKey, { expiresIn: '1h'} )
+      const token= jwt.sign({userId: user.userId, userName: user.userName, userType: user.role}, secretKey)
        return res.status(200).json({ message: 'Login successful'  ,userId:user.userId , token});
      } else {
        return res.status(401).json({ message: 'Invalid password' });
@@ -53,9 +54,7 @@ const login = async (req, res) => {
  
  const updateRole=async(req,res)=>{
   try{
-    console.log('entered')
      const {userId, role} =req.body;
-     console.log(userId, role)
      const updatedRole= await  User.findOneAndUpdate({userId:userId},{$set:{role: role}},{ new: true })
      if(updatedRole){
       return res.status(200).json({message:`${role} for ${userId} updated successfully`})

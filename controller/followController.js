@@ -5,36 +5,34 @@ const mongoose=require('mongoose')
 const followUser= async (req, res)=>{
   try{
     const userId= req.params.userId
-    console.log(userId)
     const loggedInUser = req.user.userId
-    console.log(loggedInUser)
+    if(loggedInUser===userId){
+      return res.status(400).json({ message: 'You cannot follow yourself' });
+    }
     const followerId = await User.findOne({userId:loggedInUser})
     followerId.followings.push(userId)
     const followingId= await User.findOne({userId:userId})
     followingId.followers.push(loggedInUser)
-    console.log(await User.findOne({userId:userId}).populate('followers'))
     await followerId.save()
     await followingId.save()
-    return res.send(200).json({message:'successful'})
+    return res.status(200).json({message:'successful'})
   }
   catch(error){
-    console.log(error)
+    res.status(500).json({ error: error });
   }
   }
   const unfollowUser= async (req, res)=>{
     try{
       const userId= req.params.userId
-      console.log(userId)
       const loggedInUser= req.user.userId
-      console.log(loggedInUser)
       const followerId = await User.findOne({userId:loggedInUser})
       await followerId.updateOne({ $pull: { followings: userId } });
       const followingId= await User.findOne({userId:userId})
       await followingId.updateOne({$pull:{followers:loggedInUser}})
-      return res.send(200).json({message:'successful'})
+      return res.status(200).json({message:'successful'})
     }
     catch(error){
-      console.log(error)
+      res.status(500).json({ error: error });
     }
     
     }

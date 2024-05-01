@@ -18,7 +18,33 @@ const postSchema = new mongoose.Schema({
         required: true
     },
     description:{
-        type: String
+        type: String,
+        required : true 
+    },
+    artworkName: {
+      type: String,
+      required: true
+    },
+    theme: {
+        type: String,
+        required: true
+    },
+    condition: {
+        type: String,
+        required: true
+    },
+    dimensions: {
+        height: { type: Number, required: true },
+        width: { type: Number, required: true },
+        depth: { type: Number, required: true }
+    },
+    category: {
+        type: String,
+        enum: ['Abstract', 'Oil Painting', 'Glass Painting', 'Pastel', 'Acrylic', 'Realism'],
+    },
+    customization: {
+        type: Boolean,
+        required: true
     },
     price :{
       type: Number,
@@ -48,9 +74,6 @@ const postSchema = new mongoose.Schema({
 
 // postSchema.path('userId').ref(User, 'userId');
 const Post = mongoose.model('Post',postSchema)
-
-// postSchema.path('userId').ref('User'); 
-// console.log(postSchema.paths.userId)
 
 
 module.exports=Post;
