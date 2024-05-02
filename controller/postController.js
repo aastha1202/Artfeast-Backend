@@ -96,6 +96,7 @@ const fetchHomePageData = async(req,res) => {
                     price: 1,
                     userId: 1,
                     postId: 1,
+                    theme:1,
                     likesCount : {$size: '$likes'}
                 }
             },
@@ -118,6 +119,7 @@ const fetchHomePageData = async(req,res) => {
                     postUrl: 1,
                     price: 1,
                     postId:1,
+                    theme:1,
                     user: { $arrayElemAt: ['$user.fullName', 0] } 
                 }
             }
