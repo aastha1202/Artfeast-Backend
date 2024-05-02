@@ -48,7 +48,7 @@ const fetchAllOrders = async(req,res)=> {
         const orders = await Order.find({userId: userId}).populate({
             path: 'items.postId',
             model: 'Post',
-            select: 'postUrl artworkName theme',
+            select: 'postUrl artworkName theme price',
             foreignField: '_id'
         }).populate({
             path: 'userId',
