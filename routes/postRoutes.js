@@ -14,6 +14,7 @@ router.post('/unlike/:postId',middleware, postController.unlikePost)
 router.post('/comment/:postId',middleware, postController.commentOnPost)
 router.get('/comment/:postId',middleware, postController.fetchCommentOfPost)
 router.get('/category/:categoryName',middleware, postController.getPostsByCategory)
+router.post('/similarArtwork',middleware, postController.findSimilarArtwork)
 
 
 

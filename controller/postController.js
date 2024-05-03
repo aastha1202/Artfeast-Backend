@@ -1,7 +1,25 @@
 const Post = require('../models/post')
 const mongoose= require('mongoose')
 const User = require('../models/user');
+const crypto = require('crypto');
+const https = require('https');
 
+function calculateImageHash(imageUrl) {
+    return new Promise((resolve, reject) => {
+        const hash = crypto.createHash('sha256');
+        https.get(imageUrl, (response) => {
+            response.on('data', (data) => {
+                hash.update(data);
+            });
+            response.on('end', () => {
+                const imageHash = hash.digest('hex');
+                resolve(imageHash);
+            });
+        }).on('error', (error) => {
+            reject(error);
+        });
+    });
+}
 
 const upload = async (req,res)=>{
     try{
@@ -11,7 +29,8 @@ const upload = async (req,res)=>{
             return res.status(403).json({ message: 'Only artists are allowed to upload a Post' });
         }
         const postId = new mongoose.Types.ObjectId();
-        const newPost = new Post({postId,postUrl,userId:userId, description,price,artworkName,theme, condition,dimensions, category, customization})
+        const imageHash = await calculateImageHash(postUrl); 
+        const newPost = new Post({postId,postUrl,userId:userId, description,price,artworkName,theme, condition,dimensions, category, customization,imageHash})
         await newPost.save()
         return res.status(200).json({message:'Uploaded Post'})
 
@@ -71,8 +90,8 @@ const fetchHomePageData = async(req,res) => {
     try{
         const trendingArtists= await User.aggregate([
             {
-                $match: { role: "artist" } 
-              },
+                $match: { role: "artist", followers: { $gt: 0 } }
+            },
             { 
               $project: {
                 fullName: 1,
@@ -274,6 +293,18 @@ const fetchCommentOfPost = async (req,res) => {
     }
 }
 
+const findSimilarArtwork = async (req, res) => {
+    try {
+        const { imageHash } = req.params;
+        const similarArtwork = await Post.find({ imageHash: imageHash });
+
+        return res.status(200).json(similarArtwork);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error });
+    }
+}; 
+
 
 module.exports={
     upload,
@@ -285,5 +316,6 @@ module.exports={
     getPostsByCategory,
     unlikePost,
     commentOnPost,
-    fetchCommentOfPost
+    fetchCommentOfPost,
+    findSimilarArtwork
 }
