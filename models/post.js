@@ -69,7 +69,7 @@ const postSchema = new mongoose.Schema({
       },
       imageHash: {
         type: String,
-        required: true
+        // required: true
     }
     
     
