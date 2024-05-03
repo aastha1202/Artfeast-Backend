@@ -90,7 +90,7 @@ const fetchHomePageData = async(req,res) => {
     try{
         const trendingArtists= await User.aggregate([
             {
-                $match: { role: "artist", followers: { $gt: 0 } }
+                $match: { role: "artist", followers: { $ne: [] } } 
             },
             { 
               $project: {
